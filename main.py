@@ -1,32 +1,37 @@
 from models import Ciudad
-from coordenadas import CoordenadasCSV, CoordenadasAPI, CoordenadasMock
+from coordenadas import CoordenadasAPI
 from calculadora_distancia import CalculadoraDistancia
 
 def main():
-    ciudad1 = Ciudad("Peru", "Lima")
-    ciudad2 = Ciudad("Chile", "Santiago")
+    ciudad1 = Ciudad("Perú", "Lima")
+    ciudad2 = Ciudad("Argentina", "Buenos Aires")
+    ciudad3 = Ciudad("Uruguay", "Montevideo")
 
-    # Para CoordenadasAPI
+    ciudades = [ciudad1, ciudad2, ciudad3]
+
     servicio_api = CoordenadasAPI()
-    coord1_api = servicio_api.obtener_coordenadas(ciudad1)
-    coord2_api = servicio_api.obtener_coordenadas(ciudad2)
+    coordenadas = []
+    for ciudad in ciudades:
+        coord = servicio_api.obtener_coordenadas(ciudad)
+        if coord:
+            coordenadas.append(coord)
+        else:
+            print(f"No se pudieron obtener las coordenadas para {ciudad.nombre_ciudad}, {ciudad.nombre_pais}")
 
-    # Para CoordenadasCSV
-    servicio_csv = CoordenadasCSV()
-    coord1_csv = servicio_csv.obtener_coordenadas(ciudad1)
-    coord2_csv = servicio_csv.obtener_coordenadas(ciudad2)
+    if len(coordenadas) < 2:
+        print("No se pudieron obtener las coordenadas para al menos dos ciudades.")
+        return
 
-    if coord1_api and coord2_api:
-        distancia_api = CalculadoraDistancia.calcular_distancia(coord1_api, coord2_api)
-        print(f"La distancia entre {ciudad1.nombre_ciudad} y {ciudad2.nombre_ciudad} (API) es: {distancia_api:.2f} km")
-    else:
-        print("No se pudieron obtener las coordenadas de una o ambas ciudades (API).")
+    distancias = []
+    for i in range(len(coordenadas)):
+        for j in range(i+1, len(coordenadas)):
+            distancia = CalculadoraDistancia.calcular_distancia(coordenadas[i], coordenadas[j])
+            distancias.append((distancia, ciudades[i], ciudades[j]))
 
-    if coord1_csv and coord2_csv:
-        distancia_csv = CalculadoraDistancia.calcular_distancia(coord1_csv, coord2_csv)
-        print(f"La distancia entre {ciudad1.nombre_ciudad} y {ciudad2.nombre_ciudad} (CSV) es: {distancia_csv:.2f} km")
-    else:
-        print("No se pudieron obtener las coordenadas de una o ambas ciudades (CSV).")
+    distancias.sort(key=lambda x: x[0])
+    ciudad1, ciudad2 = distancias[0][1].nombre_ciudad, distancias[0][2].nombre_ciudad
+    pais1, pais2 = distancias[0][1].nombre_pais, distancias[0][2].nombre_pais
+    print(f"Las ciudades más cercanas son {ciudad1} ({pais1}) y {ciudad2} ({pais2})")
 
 if __name__ == "__main__":
     main()
