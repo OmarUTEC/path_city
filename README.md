@@ -1,10 +1,10 @@
 # Ejercicio de Obtención de Coordenadas y Cálculo de Distancia
 
 ## Equipo de Contribución
-- [Repositorio en GitHub](https://github.com/NoeParedes/Distancia-entre-ciudades.git)
+- [Repositorio](https://github.com/NoeParedes/Distancia-entre-ciudades.git)
 
 ## Pruebas Unitarias
-Las pruebas fueron desarrolladas y ejecutadas en la carpeta [`test_distancia_ciudades.py`](test_distancia_ciudades)
+Las pruebas fueron desarrolladas en [`test_distancia_ciudades.py`](test_distancia_ciudades)
 
 
 ## Requisitos
