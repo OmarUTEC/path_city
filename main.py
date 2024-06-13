@@ -2,31 +2,32 @@ from models import Ciudad
 from coordenadas import CoordenadasCSV, CoordenadasAPI, CoordenadasMock
 from calculadora_distancia import CalculadoraDistancia
 
+def ciudades_mas_cercanas(ciudad1, ciudad2, ciudad3):
+    # Obtener coordenadas de las ciudades
+    servicio = CoordenadasAPI()  # Puedes cambiar el servicio aquí
+    coord1 = servicio.obtener_coordenadas(ciudad1)
+    coord2 = servicio.obtener_coordenadas(ciudad2)
+    coord3 = servicio.obtener_coordenadas(ciudad3)
+
+    # Calcular todas las distancias
+    distancias = [
+        (ciudad1, ciudad2, CalculadoraDistancia.calcular_distancia(coord1, coord2)),
+        (ciudad1, ciudad3, CalculadoraDistancia.calcular_distancia(coord1, coord3)),
+        (ciudad2, ciudad3, CalculadoraDistancia.calcular_distancia(coord2, coord3))
+    ]
+
+    # Encontrar las dos distancias más cortas
+    distancias.sort(key=lambda x: x[2])  # Ordenar por distancia
+    return distancias[0][:2]
+
 def main():
     ciudad1 = Ciudad("Peru", "Lima")
-    ciudad2 = Ciudad("Chile", "Santiago")
+    ciudad2 = Ciudad("Colombia", "Bogotá")
+    ciudad3 = Ciudad("Argentina", "Buenos Aires")
 
-    # Para CoordenadasAPI
-    servicio_api = CoordenadasAPI()
-    coord1_api = servicio_api.obtener_coordenadas(ciudad1)
-    coord2_api = servicio_api.obtener_coordenadas(ciudad2)
+    ciudad_cercana1, ciudad_cercana2 = ciudades_mas_cercanas(ciudad1, ciudad2, ciudad3)
 
-    # Para CoordenadasCSV
-    servicio_csv = CoordenadasCSV()
-    coord1_csv = servicio_csv.obtener_coordenadas(ciudad1)
-    coord2_csv = servicio_csv.obtener_coordenadas(ciudad2)
-
-    if coord1_api and coord2_api:
-        distancia_api = CalculadoraDistancia.calcular_distancia(coord1_api, coord2_api)
-        print(f"La distancia entre {ciudad1.nombre_ciudad} y {ciudad2.nombre_ciudad} (API) es: {distancia_api:.2f} km")
-    else:
-        print("No se pudieron obtener las coordenadas de una o ambas ciudades (API).")
-
-    if coord1_csv and coord2_csv:
-        distancia_csv = CalculadoraDistancia.calcular_distancia(coord1_csv, coord2_csv)
-        print(f"La distancia entre {ciudad1.nombre_ciudad} y {ciudad2.nombre_ciudad} (CSV) es: {distancia_csv:.2f} km")
-    else:
-        print("No se pudieron obtener las coordenadas de una o ambas ciudades (CSV).")
+    print(f"Las dos ciudades más cercanas son {ciudad_cercana1.nombre_ciudad}, {ciudad_cercana1.nombre_pais} y {ciudad_cercana2.nombre_ciudad}, {ciudad_cercana2.nombre_pais}")
 
 if __name__ == "__main__":
     main()
